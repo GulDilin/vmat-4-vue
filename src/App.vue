@@ -13,7 +13,7 @@
 
     <v-content>
       <v-container
-      fluid
+      
       fill-height
       fill-width
       >
