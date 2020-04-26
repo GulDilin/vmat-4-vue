@@ -211,7 +211,7 @@ app
         });
       },
       get_approx_func() {
-        axios.post('http://127.0.0.1:5000/api/', {
+        axios.post('https://vmat-4-api.herokuapp.com/api/', {
           function: this.func,
           left: this.left,
           right: this.right,
