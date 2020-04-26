@@ -28,6 +28,9 @@
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.3.0"
   },
+  "scripts": {
+    "start": "npm run serve",
+  },
   "eslintConfig": {
     "root": true,
     "env": {
