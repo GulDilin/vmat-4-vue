@@ -1,202 +1,255 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <v-app id="inspire">
 
-  </div>
+
+      <v-app-bar
+      app
+      color="indigo"
+      dark
+      >
+      <v-toolbar-title>Function approximation</v-toolbar-title>
+    </v-app-bar>
+
+    <v-content>
+      <v-container
+      fluid
+      fill-height
+      fill-width
+      >
+      <v-layout
+      align-center
+      justify-center
+      >
+      <v-flex>
+        <v-tooltip left>
+          <template v-slot:activator="{ on }">
+            <v-btn
+            :href="source"
+            icon
+            large
+            target="_blank"
+            v-on="on"
+            >
+            <v-icon large>mdi-code-tags</v-icon>
+          </v-btn>
+        </template>
+        <span>Source</span>
+      </v-tooltip>
+
+      <v-tooltip right>
+        <template v-slot:activator="{ on }">
+          <v-btn
+          icon
+          large
+          href="https://codepen.io/johnjleider/pen/rJdVMq"
+          target="_blank"
+          v-on="on"
+          >
+          <v-icon large>mdi-codepen</v-icon>
+        </v-btn>
+      </template>
+      <span>Codepen</span>
+    </v-tooltip>
+
+    <v-row justify-center align-center>
+      <div id="chart">
+        <apexchart type="line" height="500" width="600" :options="chartOptions" :series="series"></apexchart>
+      </div>
+
+      <v-form v-model="valid">
+        <v-container fill-height>
+          <v-col align-center>
+
+            <v-text-field
+            v-model="func"
+            :rules="funcRules"
+            label="Function"
+            id="func"
+            v-on:change="get_func"
+            outlined
+            required
+            ></v-text-field>
+
+            <v-text-field
+            v-model="left"
+            :rules="floatRules"
+            label="Left bound"
+            v-on:change="get_func"
+            outlined
+            required
+            ></v-text-field>
+
+            <v-text-field
+            v-model="right"
+            :rules="floatRules"
+            label="Right bound"
+            v-on:change="get_func"
+            outlined
+            required
+            ></v-text-field>
+
+            <v-text-field
+            v-model="dots_count"
+            :rules="intRules"
+            label="Number of dots"
+            outlined
+            required
+            ></v-text-field>
+
+            <v-btn
+            rounded
+            v-on:click="get_approx_func"
+
+            >
+            Get approximation
+          </v-btn>
+
+        </v-col>
+      </v-container>
+    </v-form>
+  </v-row>
+</v-flex>
+</v-layout>
+</v-container>
+</v-content>
+<v-footer
+color="indigo"
+app
+>
+<span class="white--text">&copy; 2020</span>
+</v-footer>
+</v-app>
+</div>
 </template>
 
 <script>
+  import axios from 'axios'
+  //   // import VueApexCharts from 'vue-apexcharts'
+  import ApexCharts from 'apexcharts'
 
-import axios from 'axios'
-    // import VueApexCharts from 'vue-apexcharts'
-    import axios from 'axios'
-    
-    import ApexCharts from 'apexcharts'
-
-    export default{
-        data(){
-            return {
-                series: [],
-                chartOptions: {
-                    chart: {
-                        height: 500,
-                        id:'chart2',
-                        type: 'line',
-                        zoom: {
-                            enabled: false
-                        },
-                        toolbar: {
-                            autoSelected: 'pan',
-                            show: false
-                        }
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        curve: 'stepline'
-                    },
-                    title: {
-                        text: 'Node usage',
-                        align: 'left'
-                    },
-                    grid: {
-                        row: {
-                            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                            opacity: 0.5
-                        },
-                    },
-                    fill: {
-                        opacity: 1,
-                    },
-                    markers: {
-                        size: 0
-                    },
-                    // xaxis: null,
-                    xaxis: {
-                        type:'datetime',
-                        // categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"],
-                    },
-
-                },
-                seriesLine: [],
-                chartOptionsLine: {
-                    chart: {
-                        id: 'chart1',
-                        height: 130,
-                        type: 'area',
-                        brush:{
-                            target: 'chart2',
-                            enabled: true
-                        },
-                        selection: {
-                            enabled: true,
-                            xaxis: {
-                            },
-                        },
-                    },
-                    colors: ['#008FFB'],
-                    stroke: {
-                        curve: 'stepline'
-                    },
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            opacityFrom: 0.91,
-                            opacityTo: 0.1,
-                        }
-                    },
-                    xaxis: {
-                        type: 'datetime',
-                        tooltip: {
-                            enabled: false
-                        }
-                    },
-                    yaxis: {
-                        tickAmount: 2
-                    }
-                },
-                seriesRange: [
-                    {
-                        data: []
-                    }
-                ],
-                chartOptionsRange: {
-                    chart: {
-                        height: 350,
-                        type: 'rangeBar',
-                        id: 'chart3',
-                        zoom: {
-                            enabled: true
-                        },
-                    },
-                    plotOptions: {
-                        bar: {
-                            horizontal: true,
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: function(val, opts) {
-                            var label = opts.w.globals.labels[opts.dataPointIndex]
-                            return label
-                        },
-                        style: {
-                            colors: ['#f3f4f5', '#fff']
-                        }
-                    },
-                    xaxis: {
-                        type: 'datetime'
-                    },
-                    yaxis: {
-                        show: false
-                    },
-                    grid: {
-                        row: {
-                            colors: ['#f3f4f5', '#fff'],
-                            opacity: 1
-                        }
-                    }
-                }
-            }
+  export default {
+    props: {
+      source: String,
+    },
+    data: () => ({
+      drawer: null,
+      func: "x**2",
+      funcRules: [
+      v => !!v || 'Function is required',
+      ],
+      left: -2,
+      right: 2,
+      dots_count: 10,
+      floatRules: [
+      v => !!v || 'Float value is required',
+      v => !isNaN(parseFloat(v)) && isFinite(v)|| 'Need to me decimal',
+      ],
+      intRules: [
+      v => !!v || 'Integer value is required',
+      v => !isNaN(parseInt(v)) && isFinite(v)|| 'Need to be integer',
+      v => (v.valueOf() > 0) || 'Need to be positive'
+      ],
+      series: [],
+      chartOptions: {
+        chart: {
+          id:'chart',
+          type: 'line',
+          zoom: {
+            enabled: false
+          },
         },
-        mounted() {
-            axios
-            .get('http://192.168.99.100:5000/api/zabbix/node_usage?interval=d&from=1586300000&node=PITER-WIN10')
-            .then(response => {
-                ApexCharts.exec("chart1", "updateOptions", {
-                    series: response.data.series,
-                    xaxis: {
-                        type: 'datetime',
-                        categories: response.data.xaxis.categories,
-                    },
-                    selection: {
-                        enabled: true,
-                        xaxis: {
-                            min: response.data.xaxis.categories[0],// new Date(response.data.xaxis.categories[0]).getTime(),
-                            max: response.data.xaxis.categories[- response.data.xaxis.categories.length / 4]// new Date(response.data.xaxis.categories[-1]).getTime()
-                        }
-                    },
-                });
-                ApexCharts.exec("chart2", "updateOptions", {
-                    series: response.data.series,
-                    xaxis: {
-                        type: 'datetime',
-                        categories: response.data.xaxis.categories,
-                    },
-                    tooltip: {
-                        x: {
-                            format: 'dd/MM/yy HH:mm'
-                        }
-                    }
-                });
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        title: {
+          text: 'Functions',
+          align: 'left'
+        },
+        grid: {
+          row: {
+            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+          },
+        },
+        tooltip:{
+          enabled: true,
+          x:{
+            show: true,
+            formatter: function (value) {
+              return Math.floor(value * 1000) / 1000;
+            }
+          }
+        },
+        fill: {
+          opacity: 1,
+        },
+        markers:{
+          size: [0, 6, 0],
+        },
+        yaxis: {
+          labels: {
+            formatter: function (value) {
+              return Math.floor(value * 1000) / 1000;
+            }
+          },
+        },
+        xaxis: {
+          type:'numeric',
+        },
 
-                // this.series = response.data.series;
-                // this.chartOptions.xaxis.categories = response.data.xaxis.categories;
-                // console.log(response.data.xaxis.categories);
-            })
-            .catch(error => {
-                console.log(error);
-                alert(error);
-            });
-            axios
-            .get('http://192.168.99.100:5000/api/zabbix/node_jobs?from=1586822400&to=1586908800&node=PITER-WIN10&intervals=1')
-            .then(response => {
-                ApexCharts.exec("chart3", "updateOptions", {
-                    series: response.data.series,
-                });
-            });
-        }
+      },
+    }),
+    
+    methods:{
+      get_func() {
+        axios.post('http://127.0.0.1:5000/api/', {
+          function: this.func,
+          left: this.left,
+          right: this.right,
+          points_count: this.dots_count
+        })
+        .then(function (response) {
+          console.log(response.series);
+          ApexCharts.exec("chart", "updateOptions", {
+            series: response.data.series,
+          });
+
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      },
+      get_approx_func() {
+        axios.post('http://127.0.0.1:5000/api/', {
+          function: this.func,
+          left: this.left,
+          right: this.right,
+          points_count: this.dots_count,
+          approximate: true
+        })
+        .then(function (response) {
+          console.log(response.series);
+          ApexCharts.exec("chart", "updateOptions", {
+            series: response.data.series,
+          });
+
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
+    },
+
+    created () {
+      this.$vuetify.theme.dark = false
+    },
+
+    mounted() {
+      this.get_func();
     }
+  }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
