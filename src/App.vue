@@ -22,95 +22,68 @@
       justify-center
       >
       <v-flex>
-        <v-tooltip left>
-          <template v-slot:activator="{ on }">
-            <v-btn
-            :href="source"
-            icon
-            large
-            target="_blank"
-            v-on="on"
-            >
-            <v-icon large>mdi-code-tags</v-icon>
-          </v-btn>
-        </template>
-        <span>Source</span>
-      </v-tooltip>
 
-      <v-tooltip right>
-        <template v-slot:activator="{ on }">
-          <v-btn
-          icon
-          large
-          href="https://codepen.io/johnjleider/pen/rJdVMq"
-          target="_blank"
-          v-on="on"
-          >
-          <v-icon large>mdi-codepen</v-icon>
-        </v-btn>
-      </template>
-      <span>Codepen</span>
-    </v-tooltip>
 
-    <v-row justify-center align-center>
-      <div id="chart">
-        <apexchart type="line" height="500" width="600" :options="chartOptions" :series="series"></apexchart>
-      </div>
 
-      <v-form v-model="valid">
-        <v-container fill-height>
-          <v-col align-center>
+        <v-row justify-center align-center>
+          <div id="chart">
+            <apexchart type="line" height="500" width="600" :options="chartOptions" :series="series"></apexchart>
+          </div>
 
-            <v-text-field
-            v-model="func"
-            :rules="funcRules"
-            label="Function"
-            id="func"
-            v-on:change="get_func"
-            outlined
-            required
-            ></v-text-field>
+          <v-form v-model="valid">
+            <v-container fill-height>
+              <v-col align-center>
 
-            <v-text-field
-            v-model="left"
-            :rules="floatRules"
-            label="Left bound"
-            v-on:change="get_func"
-            outlined
-            required
-            ></v-text-field>
+                <v-text-field
+                v-model="func"
+                :rules="funcRules"
+                label="Function"
+                id="func"
+                v-on:change="get_func"
+                outlined
+                required
+                ></v-text-field>
 
-            <v-text-field
-            v-model="right"
-            :rules="floatRules"
-            label="Right bound"
-            v-on:change="get_func"
-            outlined
-            required
-            ></v-text-field>
+                <v-text-field
+                v-model="left"
+                :rules="floatRules"
+                label="Left bound"
+                v-on:change="get_func"
+                outlined
+                required
+                ></v-text-field>
 
-            <v-text-field
-            v-model="dots_count"
-            :rules="intRules"
-            label="Number of dots"
-            outlined
-            required
-            ></v-text-field>
+                <v-text-field
+                v-model="right"
+                :rules="floatRules"
+                label="Right bound"
+                v-on:change="get_func"
+                outlined
+                required
+                ></v-text-field>
 
-            <v-btn
-            rounded
-            v-on:click="get_approx_func"
+                <v-text-field
+                v-model="dots_count"
+                :rules="intRules"
+                label="Number of dots"
+                outlined
+                required
+                ></v-text-field>
 
-            >
-            Get approximation
-          </v-btn>
+                <v-btn
+                rounded
+                v-on:click="get_approx_func"
 
-        </v-col>
-      </v-container>
-    </v-form>
-  </v-row>
-</v-flex>
-</v-layout>
+                >
+                Get approximation
+              </v-btn>
+
+            </v-col>
+          </v-container>
+        </v-form>
+      </v-row>
+    </v-flex>
+  </v-layout>
 </v-container>
 </v-content>
 <v-footer
@@ -118,6 +91,20 @@ color="indigo"
 app
 >
 <span class="white--text">&copy; 2020</span>
+<v-tooltip right>
+  <template v-slot:activator="{ on }">
+    <v-btn
+    icon
+    large
+    href="https://github.com/GulDilin/vmat-4-compose"
+    target="_blank"
+    v-on="on"
+    >
+    <v-icon large color="white">mdi-github</v-icon>
+  </v-btn>
+</template>
+<span>Source</span>
+</v-tooltip>
 </v-footer>
 </v-app>
 </div>
@@ -178,7 +165,7 @@ app
         tooltip:{
           enabled: true,
           x:{
-            show: true,
+            // show: true,
             formatter: function (value) {
               return Math.floor(value * 1000) / 1000;
             }
