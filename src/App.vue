@@ -434,8 +434,8 @@ app
 
     created () {
       this.$vuetify.theme.dark = false;
-      this.corrected_x = new Map();
-          this.corrected_y = new Map();
+      this.corrected_x = new Map([]);
+      this.corrected_y = new Map([]);
     },
 
     mounted() {
