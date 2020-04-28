@@ -346,6 +346,8 @@ app
           this.new_y = null;
           this.corrected_x.clear();
           this.corrected_y.clear();
+          this.checked_x = [];
+          this.checked_y = [];
         })
         .catch(error => {
           console.log(error);
