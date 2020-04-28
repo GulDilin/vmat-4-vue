@@ -257,8 +257,8 @@ app
       corr_x: null,
       corr_y: null,
       checked_x: [],
-      corrected_x: new Map(),
-      corrected_y: new Map(),
+      corrected_x: null,
+      corrected_y: null,
       checked_y: [],
       floatRules: [
       v => !!v || 'Float value is required',
@@ -335,7 +335,6 @@ app
           points_count: this.dots_count
         })
         .then(response =>  {
-          console.log(response.series);
           ApexCharts.exec("chart", "updateOptions", {
             series: response.data.series,
           });
@@ -345,8 +344,8 @@ app
 
           this.func_err = "";
           this.new_y = null;
-          this.corrected_x = new Map();
-          this.corrected_y = new Map();
+          this.corrected_x.clear();
+          this.corrected_y.clear();
         })
         .catch(error => {
           console.log(error);
@@ -367,13 +366,11 @@ app
         for (let [key, value] of this.corrected_x) {
           corrected_x_list.push({index: key - 1, x: value});
         }
-        console.log(corrected_x_list)
         let corrected_y_list = [];
         for (let [key, value] of this.corrected_y) {
           corrected_y_list.push({index: key - 1, y: value});
 
         }
-        console.log(corrected_y_list)
 
         axios.post('https://vmat-4-api.herokuapp.com/api/', {
           function: this.func,
@@ -385,7 +382,6 @@ app
           correct_y: corrected_y_list
         })
         .then(response => {
-          console.log(response.series);
           ApexCharts.exec("chart", "updateOptions", {
             series: response.data.series,
           });
@@ -397,7 +393,6 @@ app
         })
         .catch(error => {
           console.log(error);
-          console.log("That was error")
           this.func_err = "Server can't recogrize function";
         });
       },
@@ -407,13 +402,10 @@ app
         for (let [key, value] of this.corrected_x) {
           corrected_x_list.push({index: key - 1, x: value});
         }
-        console.log(corrected_x_list)
         let corrected_y_list = [];
         for (let [key, value] of this.corrected_y) {
           corrected_y_list.push({index: key - 1, y: value});
-
         }
-        console.log(corrected_y_list)
         axios.post('https://vmat-4-api.herokuapp.com/api/', {
           function: this.func,
           left: this.left,
@@ -425,7 +417,6 @@ app
           new_x: this.new_x
         })
         .then(response => {
-          console.log(response.series);
           ApexCharts.exec("chart", "updateOptions", {
             series: response.data.series,
           });
@@ -442,7 +433,9 @@ app
     },
 
     created () {
-      this.$vuetify.theme.dark = false
+      this.$vuetify.theme.dark = false;
+      this.corrected_x = new Map();
+          this.corrected_y = new Map();
     },
 
     mounted() {
