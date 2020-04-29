@@ -326,7 +326,7 @@ app
     
     methods:{
       get_func() {
-        axios.post('http://localhost:8010/api/', {
+        axios.post('https://vmat-4-api.herokuapp.com/api/', {
           function: this.func,
           left: this.left,
           right: this.right,
@@ -377,7 +377,7 @@ app
 
         }
 
-        axios.post('http://localhost:8010/api/', {
+        axios.post('https://vmat-4-api.herokuapp.com/api/', {
           function: this.func,
           left: this.left,
           right: this.right,
