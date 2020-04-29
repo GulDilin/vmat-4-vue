@@ -22,9 +22,7 @@
       >
       <v-flex>
 
-
-
-        <v-row   class="nowrap justify-center align-center fill-width" fill-width>
+        <v-row   class="justify-center align-center fill-width">
           <div id="chart">
             <apexchart type="line" height="500" width="600" :options="chartOptions" :series="series"></apexchart>
           </div>
