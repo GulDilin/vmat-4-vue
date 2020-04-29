@@ -13,7 +13,6 @@
 
     <v-content>
       <v-container
-      
       fill-height
       fill-width
       >
@@ -86,8 +85,7 @@
                 </v-btn>
               </v-row>
             </v-col>
-
-            <v-col cols="12" sm="6">
+            <v-col >
 
               <v-fab-transition>
                 <v-alert type="error" v-show="func_err" fab>
@@ -328,7 +326,7 @@ app
     
     methods:{
       get_func() {
-        axios.post('https://vmat-4-api.herokuapp.com/api/', {
+        axios.post('http://localhost:8010/api/', {
           function: this.func,
           left: this.left,
           right: this.right,
@@ -351,7 +349,12 @@ app
         })
         .catch(error => {
           console.log(error);
-          this.func_err = "Server can't recogrize function";
+          let data = error.response.data
+          if ('error' in data){
+            this.func_err = data.error;
+          } else {
+            this.func_err = "Server can't recogrize function";
+          }
         });
       },
 
@@ -374,7 +377,7 @@ app
 
         }
 
-        axios.post('https://vmat-4-api.herokuapp.com/api/', {
+        axios.post('http://localhost:8010/api/', {
           function: this.func,
           left: this.left,
           right: this.right,
@@ -394,8 +397,13 @@ app
           // this.choosed_x = this.dots.map(v => v != null);
         })
         .catch(error => {
-          console.log(error);
-          this.func_err = "Server can't recogrize function";
+          console.log(error.response);
+          let data = error.response.data
+          if ('error' in data){
+            this.func_err = data.error;
+          } else {
+            this.func_err = "Server can't recogrize function";
+          }
         });
       },
 
@@ -429,7 +437,12 @@ app
         })
         .catch(error => {
           console.log(error);
-          this.func_err = "Server couldnt find y for that x";
+          let data = error.response.data
+          if ('error' in data){
+            this.func_err = data.error;
+          } else {
+            this.func_err = "Server couldnt find y for that x";
+          }
         });
       }
     },
