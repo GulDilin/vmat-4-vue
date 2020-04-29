@@ -8,7 +8,7 @@
       color="indigo"
       dark
       >
-      <v-toolbar-title>Function kek</v-toolbar-title>
+      <v-toolbar-title>Function interpolation</v-toolbar-title>
     </v-app-bar>
 
     <v-content>
