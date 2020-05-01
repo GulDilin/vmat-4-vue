@@ -23,7 +23,8 @@
       <v-flex>
 
         <v-row   class="justify-center align-center fill-width">
-          <div id="chart">
+
+          <div id="chart" >
             <apexchart type="line" height="500" width="600" :options="chartOptions" :series="series"></apexchart>
           </div>
 
@@ -75,141 +76,155 @@
                 ></v-text-field>
 
                 <v-row class="justify-center align-center">
+
+
+                  <v-skeleton-loader
+                  class="mx-auto"
+                  type="chip"
+                  :transition="fade"
+                  :loading=loading>
                   <v-btn
                   rounded
                   color="primary"
                   v-on:click="get_approx_func">
                   Get interpolation
                 </v-btn>
-              </v-row>
-            </v-col>
-            <v-col >
-
-              <v-fab-transition>
-                <v-alert type="error" v-show="func_err" fab>
-                  {{func_err}}
-                </v-alert>
-              </v-fab-transition>
-
-              <v-select
-              v-model="sel_x"
-              clearable
-              :items="dots_numbers"
-              menu-props="auto"
-              label="Dot number"
-              outlined
-              ></v-select>
-
-              <template v-for="i of dots_numbers" >
-                <v-fab-transition v-bind:key="i">
-                  <div   v-show="sel_x == i" fab>
-                    <v-card-text>
-
-
-                      <v-fab-transition>
-                        <v-text-field
-                        :rules="floatRules"
-                        v-show="checked_x.indexOf(i) != -1"
-                        label="Correct X"
-                        v-on:change="correct_x"
-                        v-model="corr_x"
-                        outlined
-                        required
-                        fab
-                        ></v-text-field>
-                      </v-fab-transition>
-
-                      <v-fab-transition>
-                        <v-text-field
-                        :rules="floatRules"
-                        v-show="checked_y.indexOf(i) != -1"
-                        v-on:change="correct_y"
-                        v-model="corr_y"
-                        label="Correct Y"
-                        outlined
-                        required
-                        fab
-                        ></v-text-field>
-                      </v-fab-transition>
-
-                      <v-row class="justify-space-around">
-                        <v-switch
-                        v-model="checked_x"
-                        :value="i"
-                        label="X"
-                        ></v-switch>
-
-                        <v-switch
-                        v-model="checked_y"
-                        label="Y"
-                        :value="i"
-                        ></v-switch>
-                      </v-row>
-
-                    </v-card-text>
-                  </div>
-                </v-fab-transition>
-              </template>
-
-              <p class="title text-center">Count new Y value</p>
-              <v-text-field
-              v-model="new_x"
-              :rules="floatRules"
-              label="New X"
-              outlined
-              required
-              ></v-text-field>
-
-              <v-fab-transition>
-                <v-alert
-                border="right"
-                color="blue-grey"
-                dark
-                fab
-                v-show="new_y != null">{{new_y}}</v-alert>
-              </v-fab-transition>
-
-              <v-row class="justify-center align-center">
-                <v-btn
-                justify-center
-                rounded
-                color="primary"
-                v-on:click="update_func">
-                Update
-              </v-btn>
+              </v-skeleton-loader>
             </v-row>
-
           </v-col>
+          <v-col >
 
-        </v-container>
-      </v-form>
-    </v-row>
+            <v-fab-transition>
+              <v-alert type="error" v-show="func_err" fab>
+                {{func_err}}
+              </v-alert>
+            </v-fab-transition>
 
-    <v-chip-group>
-      <v-chip outlined label color="primary">Dots with corrected X:</v-chip>
-      <v-chip
-      v-for="i of checked_x"
-      v-bind:key="i"
-      close
-      @click:close="del_corrected_x(i)"
-      >
-        {{i}}
-      </v-chip>
-    </v-chip-group>
+            <v-select
+            v-model="sel_x"
+            clearable
+            :items="dots_numbers"
+            menu-props="auto"
+            label="Dot number"
+            outlined
+            ></v-select>
 
-    <v-chip-group>
-      <v-chip outlined label color="primary">Dots with corrected Y:</v-chip>
-      <v-chip
-      v-for="i of checked_y"
-      v-bind:key="i"
-      close
-      @click:close="del_corrected_y(i)"
-      >
-        {{i}}
-      </v-chip>
-    </v-chip-group>
+            <template v-for="i of dots_numbers" >
+              <v-fab-transition v-bind:key="i">
+                <div   v-show="sel_x == i" fab>
+                  <v-card-text>
 
-  </v-flex>
+
+                    <v-fab-transition>
+                      <v-text-field
+                      :rules="floatRules"
+                      v-show="checked_x.indexOf(i) != -1"
+                      label="Correct X"
+                      v-on:change="correct_x"
+                      v-model="corr_x"
+                      outlined
+                      required
+                      fab
+                      ></v-text-field>
+                    </v-fab-transition>
+
+                    <v-fab-transition>
+                      <v-text-field
+                      :rules="floatRules"
+                      v-show="checked_y.indexOf(i) != -1"
+                      v-on:change="correct_y"
+                      v-model="corr_y"
+                      label="Correct Y"
+                      outlined
+                      required
+                      fab
+                      ></v-text-field>
+                    </v-fab-transition>
+
+                    <v-row class="justify-space-around">
+                      <v-switch
+                      v-model="checked_x"
+                      :value="i"
+                      label="X"
+                      ></v-switch>
+
+                      <v-switch
+                      v-model="checked_y"
+                      label="Y"
+                      :value="i"
+                      ></v-switch>
+                    </v-row>
+
+                  </v-card-text>
+                </div>
+              </v-fab-transition>
+            </template>
+
+            <p class="title text-center">Count new Y value</p>
+            <v-text-field
+            v-model="new_x"
+            :rules="floatRules"
+            label="New X"
+            outlined
+            required
+            ></v-text-field>
+
+            <v-fab-transition>
+              <v-alert
+              border="right"
+              color="blue-grey"
+              dark
+              fab
+              v-show="new_y != null">{{new_y}}</v-alert>
+            </v-fab-transition>
+
+            <v-row class="justify-center align-center">
+              <v-skeleton-loader
+              class="mx-auto"
+              type="chip"
+              :transition="fade"
+              :loading="loadingUpdate">
+              <v-btn
+              justify-center
+              rounded
+              color="primary"
+              v-on:click="update_func">
+              Update
+            </v-btn>
+          </v-skeleton-loader>
+        </v-row>
+
+      </v-col>
+
+    </v-container>
+  </v-form>
+</v-row>
+
+<v-chip-group>
+  <v-chip outlined label color="primary">Dots with corrected X:</v-chip>
+  <v-chip
+  v-for="i of checked_x"
+  v-bind:key="i"
+  close
+  @click:close="del_corrected_x(i)"
+  >
+  {{i}}
+</v-chip>
+</v-chip-group>
+
+<v-chip-group>
+  <v-chip outlined label color="primary">Dots with corrected Y:</v-chip>
+  <v-chip
+  v-for="i of checked_y"
+  v-bind:key="i"
+  close
+  @click:close="del_corrected_y(i)"
+  >
+  {{i}}
+</v-chip>
+</v-chip-group>
+
+</v-flex>
 </v-layout>
 </v-container>
 </v-content>
@@ -266,6 +281,9 @@ app
       checked_x: [],
       corrected_x: null,
       corrected_y: null,
+
+      loadingUpdate: false,
+      loading: false,
       checked_y: [],
       floatRules: [
       v => !!v || 'Float value is required',
@@ -335,6 +353,8 @@ app
     
     methods:{
       get_func() {
+        this.loading = true;
+
         axios.post('https://vmat-4-api.herokuapp.com/api/', {
           function: this.func,
           left: this.left,
@@ -342,6 +362,8 @@ app
           points_count: this.dots_count
         })
         .then(response =>  {
+          this.loading = false;
+
           ApexCharts.exec("chart", "updateOptions", {
             series: response.data.series,
           });
@@ -386,6 +408,8 @@ app
       },
 
       get_approx_func() {
+        this.loading = true;
+
         let corrected_x_list = []
         for (let [key, value] of this.corrected_x) {
           corrected_x_list.push({index: key - 1, x: value});
@@ -406,6 +430,7 @@ app
           correct_y: corrected_y_list
         })
         .then(response => {
+          this.loading = false;
           ApexCharts.exec("chart", "updateOptions", {
             series: response.data.series,
           });
@@ -427,6 +452,8 @@ app
       },
 
       update_func() {
+        this.loadingUpdate = true;
+
         let corrected_x_list = []
         for (let [key, value] of this.corrected_x) {
           corrected_x_list.push({index: key - 1, x: value});
@@ -446,6 +473,8 @@ app
           new_x: this.new_x
         })
         .then(response => {
+          this.loadingUpdate = false;
+
           ApexCharts.exec("chart", "updateOptions", {
             series: response.data.series,
           });
