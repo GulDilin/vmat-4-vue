@@ -110,7 +110,7 @@
                         <v-text-field
                         :rules="floatRules"
                         v-show="checked_x.indexOf(i) != -1"
-                        label="New X"
+                        label="Correct X"
                         v-on:change="correct_x"
                         v-model="corr_x"
                         outlined
@@ -125,7 +125,7 @@
                         v-show="checked_y.indexOf(i) != -1"
                         v-on:change="correct_y"
                         v-model="corr_y"
-                        label="New Y"
+                        label="Correct Y"
                         outlined
                         required
                         fab
@@ -151,6 +151,7 @@
                 </v-fab-transition>
               </template>
 
+              <p class="title text-center">Count new Y value</p>
               <v-text-field
               v-model="new_x"
               :rules="floatRules"
@@ -186,14 +187,24 @@
 
     <v-chip-group>
       <v-chip outlined label color="primary">Dots with corrected X:</v-chip>
-      <v-chip v-for="i of checked_x" v-bind:key="i">
+      <v-chip
+      v-for="i of checked_x"
+      v-bind:key="i"
+      close
+      @click:close="del_corrected_x(i)"
+      >
         {{i}}
       </v-chip>
     </v-chip-group>
 
     <v-chip-group>
       <v-chip outlined label color="primary">Dots with corrected Y:</v-chip>
-      <v-chip v-for="i of checked_y" v-bind:key="i">
+      <v-chip
+      v-for="i of checked_y"
+      v-bind:key="i"
+      close
+      @click:close="del_corrected_y(i)"
+      >
         {{i}}
       </v-chip>
     </v-chip-group>
@@ -362,6 +373,16 @@ app
 
       correct_y() {
         this.corrected_y.set(this.sel_x, this.corr_y);
+      },
+
+      del_corrected_x(i){
+        this.corrected_x.delete(i);
+        this.checked_x.pop(i);
+      },
+
+      del_corrected_y(i){
+        this.corrected_y.delete(i);
+        this.checked_y.pop(i);
       },
 
       get_approx_func() {
