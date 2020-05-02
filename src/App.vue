@@ -79,10 +79,10 @@
 
 
                   <v-skeleton-loader
-                  class="mx-auto"
+
                   type="chip"
-                  :transition="fade"
-                  :loading=loading>
+                  transition="scale-transition"
+                  :loading="loading">
                   <v-btn
                   rounded
                   color="primary"
@@ -182,7 +182,7 @@
               <v-skeleton-loader
               class="mx-auto"
               type="chip"
-              :transition="fade"
+              transition="scale-transition"
               :loading="loadingUpdate">
               <v-btn
               justify-center
@@ -308,7 +308,7 @@ app
           enabled: false
         },
         stroke: {
-          curve: 'smooth'
+          curve: 'straight'
         },
         title: {
           text: 'Functions',
