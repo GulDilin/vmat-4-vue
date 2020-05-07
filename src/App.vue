@@ -70,6 +70,7 @@
                 <v-text-field
                 v-model="dots_count"
                 :rules="intRules"
+                v-on:change="get_func"
                 label="Number of dots"
                 outlined
                 required
