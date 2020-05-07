@@ -387,6 +387,7 @@ app
           } else {
             this.func_err = "Server can't recogrize function";
           }
+          this.loading = false;
         });
       },
 
@@ -449,6 +450,7 @@ app
           } else {
             this.func_err = "Server can't recogrize function";
           }
+          this.loading = false;
         });
       },
 
@@ -492,6 +494,7 @@ app
           } else {
             this.func_err = "Server couldnt find y for that x";
           }
+          this.loadingUpdate = false;
         });
       }
     },
