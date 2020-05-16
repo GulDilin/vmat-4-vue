@@ -109,12 +109,11 @@
             outlined
             ></v-select>
 
-            <template v-for="i of dots_numbers" >
-              <v-fab-transition v-bind:key="i">
-                <div   v-show="sel_x == i" fab>
+            <div>
+            <template v-for="i of dots_numbers">
+              <transition name="fade" v-bind:key="i"  :duration="{ enter: 500, leave: 500 }" mode="out-in">
+                <div v-show="sel_x == i">
                   <v-card-text>
-
-
                     <v-fab-transition>
                       <v-text-field
                       :rules="floatRules"
@@ -157,8 +156,9 @@
 
                   </v-card-text>
                 </div>
-              </v-fab-transition>
+              </transition>
             </template>
+          </div>
 
             <p class="title text-center">Count new Y value</p>
             <v-text-field
@@ -206,6 +206,7 @@
   v-for="i of checked_x"
   v-bind:key="i"
   close
+  @click="sel_x = i"
   @click:close="del_corrected_x(i)"
   >
   {{i}}
@@ -218,6 +219,7 @@
   v-for="i of checked_y"
   v-bind:key="i"
   close
+  @click="sel_x = i"
   @click:close="del_corrected_y(i)"
   >
   {{i}}
@@ -255,12 +257,79 @@ app
 <script>
   import axios from 'axios'
   //   // import VueApexCharts from 'vue-apexcharts'
-  import ApexCharts from 'apexcharts'
+  // import ApexCharts from 'apexcharts'
 
   export default {
     props: {
       source: String,
     },
+
+    computed:{
+      chartOptions: function() {
+        let vm = this;
+        let options =  {
+          chart: {
+            id:'chart',
+            type: 'line',
+            zoom: {
+              enabled: true
+            },
+            events: {
+              dataPointSelection: (event, chartContext, {dataPointIndex}) => {
+                vm.sel_x = dataPointIndex + 1;
+              }
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'straight'
+          },
+          title: {
+            text: 'Functions',
+            align: 'left'
+          },
+          grid: {
+            row: {
+              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+              opacity: 0.5
+            },
+          },
+          tooltip:{
+            enabled: true,
+            // shared: false,
+            intersect: false,
+            enabledOnSeries: [0, 1, 2, 3],
+            x:{
+              // show: true,
+              formatter: function (value) {
+                return Math.floor(value * 1000) / 1000;
+              }
+            },
+          },
+          fill: {
+            opacity: 1,
+          },
+          markers:{
+            size: [0, 6, 0, 6],
+          },
+          yaxis: {
+            labels: {
+              formatter: function (value) {
+                return Math.floor(value * 1000) / 1000;
+              }
+            },
+          },
+          xaxis: {
+            type:'numeric',
+          },
+
+        };
+        return options;
+      }
+    },
+
     data: () => ({
       drawer: null,
       func: "x**2",
@@ -285,10 +354,12 @@ app
       loadingUpdate: false,
       loading: false,
       checked_y: [],
+
       floatRules: [
       v => !!v || 'Float value is required',
       v => !isNaN(parseFloat(v)) && isFinite(v)|| 'Need to me decimal',
       ],
+
       intRules: [
       v => !!v || 'Integer value is required',
       v => !isNaN(parseInt(v)) && isFinite(v)|| 'Need to be integer',
@@ -296,61 +367,16 @@ app
       ],
 
       series: [],
-      chartOptions: {
-        chart: {
-          id:'chart',
-          type: 'line',
-          zoom: {
-            enabled: true
-          },
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'straight'
-        },
-        title: {
-          text: 'Functions',
-          align: 'left'
-        },
-        grid: {
-          row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-            opacity: 0.5
-          },
-        },
-        tooltip:{
-          enabled: true,
-          shared: true,
-          enabledOnSeries: [0, 1, 2, 3],
-          x:{
-            // show: true,
-            formatter: function (value) {
-              return Math.floor(value * 1000) / 1000;
-            }
-          },
-        },
-        fill: {
-          opacity: 1,
-        },
-        markers:{
-          size: [0, 6, 0, 6],
-        },
-        yaxis: {
-          labels: {
-            formatter: function (value) {
-              return Math.floor(value * 1000) / 1000;
-            }
-          },
-        },
-        xaxis: {
-          type:'numeric',
-        },
-
-      },
     }),
-    
+
+    watch: {
+      sel_x: function(val) {
+        console.log(this.series);
+        this.corr_x = this.corrected_x[val]??this.series[1].data[val].x;
+        this.corr_y = this.corrected_y[val]??this.series[1].data[val].y;
+      }
+    },
+
     methods:{
       get_func() {
         this.loading = true;
@@ -364,9 +390,10 @@ app
         .then(response =>  {
           this.loading = false;
 
-          ApexCharts.exec("chart", "updateOptions", {
-            series: response.data.series,
-          });
+          // ApexCharts.exec("chart", "updateOptions", {
+          //   series: response.data.series,
+          // });
+          this.series = response.data.series;
           this.dots = response.data.series[1].data.map(v => v.x);
           this.dots_numbers = this.dots.map((v, i) => i + 1);
           // this.choosed_x = this.dots.map(v => v != null);
@@ -432,9 +459,10 @@ app
         })
         .then(response => {
           this.loading = false;
-          ApexCharts.exec("chart", "updateOptions", {
-            series: response.data.series,
-          });
+          // ApexCharts.exec("chart", "updateOptions", {
+          //   series: response.data.series,
+          // });
+          this.series = response.data.series;
           this.func_err = "";
           this.new_y = null;
           this.dots = response.data.series[1].data.map(v => v.x);
@@ -477,9 +505,10 @@ app
         .then(response => {
           this.loadingUpdate = false;
 
-          ApexCharts.exec("chart", "updateOptions", {
-            series: response.data.series,
-          });
+          // ApexCharts.exec("chart", "updateOptions", {
+          //   series: response.data.series,
+          // });
+          this.series = response.data.series;
           this.new_y = response.data.new_y
           this.func_err = "";
           this.dots = response.data.series[1].data.map(v => v.x);
@@ -509,3 +538,17 @@ app
     }
   }
 </script>
+
+<style type="text/css">
+.fade-enter-active {
+  transition: all .5s;
+}
+.fade-leave-active{
+  transition: all .5s;
+
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+  transform:  scale(0);
+}
+</style>
