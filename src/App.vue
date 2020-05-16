@@ -374,7 +374,7 @@ app
         console.log(this.series);
         this.corr_x = this.corrected_x[val]??this.series[1].data[val].x;
         this.corr_y = this.corrected_y[val]??this.series[1].data[val].y;
-      }
+      },
       dots_count: function() {
         this.checked_x = [];
         this.checked_y = [];
