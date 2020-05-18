@@ -110,55 +110,57 @@
             ></v-select>
 
             <div>
-            <template v-for="i of dots_numbers">
-              <transition name="fade" v-bind:key="i"  :duration="{ enter: 500, leave: 500 }" mode="out-in">
-                <div v-show="sel_x == i">
-                  <v-card-text>
-                    <v-fab-transition>
-                      <v-text-field
-                      :rules="floatRules"
-                      v-show="checked_x.indexOf(i) != -1"
-                      label="Correct X"
-                      v-on:change="correct_x"
-                      v-model="corr_x"
-                      outlined
-                      required
-                      fab
-                      ></v-text-field>
-                    </v-fab-transition>
+              <template v-for="i of dots_numbers">
+                <transition name="fade" v-bind:key="i"  :duration="{ enter: 500, leave: 500 }" mode="out-in">
+                  <div v-show="sel_x == i">
+                    <v-card-text>
+                      <v-fab-transition>
+                        <v-text-field
+                        :rules="floatRules"
+                        v-show="checked_x.indexOf(i) != -1"
+                        label="Correct X"
+                        @input="corrected_x.set(sel_x, corr_x)"
+                        v-model="corr_x"
+                        outlined
+                        required
+                        fab
+                        ></v-text-field>
+                      </v-fab-transition>
 
-                    <v-fab-transition>
-                      <v-text-field
-                      :rules="floatRules"
-                      v-show="checked_y.indexOf(i) != -1"
-                      v-on:change="correct_y"
-                      v-model="corr_y"
-                      label="Correct Y"
-                      outlined
-                      required
-                      fab
-                      ></v-text-field>
-                    </v-fab-transition>
+                      <v-fab-transition>
+                        <v-text-field
+                        :rules="floatRules"
+                        v-show="checked_y.indexOf(i) != -1"
+                        @input="corrected_y.set(sel_x, corr_y)"
+                        v-model="corr_y"
+                        label="Correct Y"
+                        outlined
+                        required
+                        fab
+                        ></v-text-field>
+                      </v-fab-transition>
 
-                    <v-row class="justify-space-around">
-                      <v-switch
-                      v-model="checked_x"
-                      :value="i"
-                      label="X"
-                      ></v-switch>
+                      <v-row class="justify-space-around">
+                        <v-switch
+                        v-model="checked_x"
+                        :value="i"
+                        @change="del_corrected_x_from_switch(i)"
+                        label="X"
+                        ></v-switch>
 
-                      <v-switch
-                      v-model="checked_y"
-                      label="Y"
-                      :value="i"
-                      ></v-switch>
-                    </v-row>
+                        <v-switch
+                        v-model="checked_y"
+                        label="Y"
+                        @change="del_corrected_y_from_switch(i)"
+                        :value="i"
+                        ></v-switch>
+                      </v-row>
 
-                  </v-card-text>
-                </div>
-              </transition>
-            </template>
-          </div>
+                    </v-card-text>
+                  </div>
+                </transition>
+              </template>
+            </div>
 
             <p class="title text-center">Count new Y value</p>
             <v-text-field
@@ -207,7 +209,7 @@
   v-bind:key="i"
   close
   @click="sel_x = i"
-  @click:close="del_corrected_x(i)"
+  @click:close="checked_x.pop(i)"
   >
   {{i}}
 </v-chip>
@@ -220,7 +222,7 @@
   v-bind:key="i"
   close
   @click="sel_x = i"
-  @click:close="del_corrected_y(i)"
+  @click:close="checked_y.pop(i)"
   >
   {{i}}
 </v-chip>
@@ -256,8 +258,6 @@ app
 
 <script>
   import axios from 'axios'
-  //   // import VueApexCharts from 'vue-apexcharts'
-  // import ApexCharts from 'apexcharts'
 
   export default {
     props: {
@@ -371,9 +371,9 @@ app
 
     watch: {
       sel_x: function(val) {
-        console.log(this.series);
-        this.corr_x = this.corrected_x[val]??this.series[1].data[val].x;
-        this.corr_y = this.corrected_y[val]??this.series[1].data[val].y;
+        console.log(this.corrected_x);
+        this.corr_x = this.corrected_x.get(val)??this.series[1].data[val-1].x;
+        this.corr_y = this.corrected_y.get(val)??this.series[1].data[val-1].y;
       },
       dots_count: function() {
         this.checked_x = [];
@@ -395,14 +395,9 @@ app
         })
         .then(response =>  {
           this.loading = false;
-
-          // ApexCharts.exec("chart", "updateOptions", {
-          //   series: response.data.series,
-          // });
           this.series = response.data.series;
           this.dots = response.data.series[1].data.map(v => v.x);
           this.dots_numbers = this.dots.map((v, i) => i + 1);
-          // this.choosed_x = this.dots.map(v => v != null);
 
           this.func_err = "";
           this.new_y = null;
@@ -423,22 +418,16 @@ app
         });
       },
 
-      correct_x() {
-        this.corrected_x.set(this.sel_x, this.corr_x);
+      del_corrected_y_from_switch(i){
+        if (this.checked_y.indexOf(i) === -1) {
+          this.corrected_y.delete(i);
+        }
       },
 
-      correct_y() {
-        this.corrected_y.set(this.sel_x, this.corr_y);
-      },
-
-      del_corrected_x(i){
-        this.corrected_x.delete(i);
-        this.checked_x.pop(i);
-      },
-
-      del_corrected_y(i){
-        this.corrected_y.delete(i);
-        this.checked_y.pop(i);
+      del_corrected_x_from_switch(i){
+        if (this.checked_x.indexOf(i) === -1) {
+          this.corrected_x.delete(i);
+        }
       },
 
       get_approx_func() {
@@ -465,15 +454,11 @@ app
         })
         .then(response => {
           this.loading = false;
-          // ApexCharts.exec("chart", "updateOptions", {
-          //   series: response.data.series,
-          // });
           this.series = response.data.series;
           this.func_err = "";
           this.new_y = null;
           this.dots = response.data.series[1].data.map(v => v.x);
           this.dots_numbers = this.dots.map((v, i) => i + 1);
-          // this.choosed_x = this.dots.map(v => v != null);
         })
         .catch(error => {
           console.log(error.response);
@@ -510,10 +495,6 @@ app
         })
         .then(response => {
           this.loadingUpdate = false;
-
-          // ApexCharts.exec("chart", "updateOptions", {
-          //   series: response.data.series,
-          // });
           this.series = response.data.series;
           this.new_y = response.data.new_y
           this.func_err = "";
