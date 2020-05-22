@@ -76,20 +76,13 @@
                 ></v-text-field>
 
                 <v-row class="justify-center align-center">
-
-
-                  <v-skeleton-loader
-
-                  type="chip"
-                  transition="scale-transition"
-                  :loading="loading">
                   <v-btn
                   rounded
                   color="primary"
+                  :loading="loading"
                   v-on:click="get_approx_func">
                   Get interpolation
                 </v-btn>
-              </v-skeleton-loader>
             </v-row>
           </v-col>
           <v-col >
@@ -181,19 +174,14 @@
             </v-fab-transition>
 
             <v-row class="justify-center align-center">
-              <v-skeleton-loader
-              class="mx-auto"
-              type="chip"
-              transition="scale-transition"
-              :loading="loadingUpdate">
               <v-btn
               justify-center
               rounded
               color="primary"
+              :loading="loadingUpdate"
               v-on:click="update_func">
               Update
             </v-btn>
-          </v-skeleton-loader>
         </v-row>
 
       </v-col>
