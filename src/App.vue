@@ -272,7 +272,9 @@ app
             id:'chart',
             type: 'line',
             zoom: {
-              enabled: true
+              enabled: true,
+              type: 'x',
+              autoScaleYaxis: true,
             },
             events: {
               dataPointSelection: (event, chartContext, {dataPointIndex}) => {
