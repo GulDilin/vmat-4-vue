@@ -81,6 +81,7 @@
                 <v-text-field
                 v-model="dots_count"
                 :rules="intRules"
+                @change="countAccuracy"
                 label="Number of dots"
                 outlined
                 required
@@ -91,6 +92,7 @@
                 <v-text-field
                 v-model="accuracy"
                 :rules="floatRules"
+                @change="countDots"
                 label="Accuracy"
                 outlined
                 required
@@ -175,10 +177,6 @@
         this.method = this.methods.find(e => e.name == val).value;
       },
 
-      dots_count: 'countAccuracy',
-
-      accuracy: 'countDots',
-
       right: 'countAccuracy',
       left: 'countAccuracy',
     },
@@ -221,11 +219,18 @@
       },
 
       countDots() {
-        this.dots_count = Math.ceil((this.right - this.left)/this.accuracy);
+        let dots_count = Math.ceil((this.right - this.left)/this.accuracy);
+        if (!isNaN(+dots_count)){
+          this.dots_count = dots_count;
+        }
+
       },
 
       countAccuracy() {
-        this.accuracy = (this.right - this.left)/this.dots_count;
+        let acc = (this.right - this.left)/this.dots_count;
+        if (!isNaN(+acc)) {
+          this.accuracy = acc
+        }
       }
     },
 
