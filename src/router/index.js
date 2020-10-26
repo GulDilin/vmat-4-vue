@@ -29,7 +29,7 @@ const routes = [
     }]
 },{
     path: '/',
-    redirect: 'functions/interpolation',
+    redirect: 'main/interpolation',
 }];
 
 

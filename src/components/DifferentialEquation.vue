@@ -10,7 +10,7 @@
 
       <LineChart @dataPointSelection="sel_x = $event.index + 1" :series="series" height="500" width="600"> </LineChart>
 
-      <v-form >
+      <v-form>
         <v-container fluid class="d-flex justify-center">
           <v-col align-center  cols="8" sm="6">
             <v-fab-transition>
